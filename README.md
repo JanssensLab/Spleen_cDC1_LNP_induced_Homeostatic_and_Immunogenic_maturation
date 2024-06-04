@@ -19,6 +19,7 @@ Here's an overview of the various R scripts used in processing the CITE-Seq data
 - 9_script_CITEseq_LNP_Merge_Triwise_RNA_part1.R: Script for triwise analysis of the merged CITE-seq RNA data part 2
 - 10_script_CITEseq_LNP_Merge_Triwise_ADT.R: Script for triwise analysis of the merged CITE-seq ADT data
 - 11_script_CITEseq_LNP_Merge_DoRothEA.R: Script for DoRothEA TF analysis of the merged CITE-seq data
+- 12_Meta_analysis_script.R: Script for meta analysis of literature gene lists to determine type of DC maturation
 
 ## Citation
 
