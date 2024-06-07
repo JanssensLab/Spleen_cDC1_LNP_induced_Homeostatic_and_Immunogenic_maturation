@@ -439,6 +439,20 @@ write.xlsx(Intersect_df_split_heatmap_excel, file = paste0("results/Upset_plots/
 
 #################################################################################################################
 
+## Late addition to meta analysis
+
+## Lennon bulk data
+C_WT_vs_NC_WT_results<-read.xlsx("results/Lennon/summary_allgenes_clint_Lennon.xlsx", sheet = "C_WT_vs_NC_WT")
+C_WT_vs_NC_WT_results_genelist<-C_WT_vs_NC_WT_results[which(C_WT_vs_NC_WT_results$adj.P.Val<0.05 & C_WT_vs_NC_WT_results$logFC>1),"gene"]
+LPS_WT_vs_NC_WT_results<-read.xlsx("results/Lennon/summary_allgenes_clint_Lennon.xlsx", sheet = "LPS_WT_vs_NC_WT")
+LPS_WT_vs_NC_WT_results_genelist<-LPS_WT_vs_NC_WT_results[which(LPS_WT_vs_NC_WT_results$adj.P.Val<0.05 & LPS_WT_vs_NC_WT_results$logFC>1),"gene"]
+
+de_gs_by_k_split_triwise[[42]]<-C_WT_vs_NC_WT_results_genelist
+de_gs_by_k_split_triwise[[43]]<-LPS_WT_vs_NC_WT_results_genelist
+
+names(de_gs_by_k_split_triwise)[42]<-"Confinement-induced DC maturation (Alraies et al., 2024, Bulk RNA-seq, In-vitro BMDCs)"
+names(de_gs_by_k_split_triwise)[43]<-"LPS-induced DC maturation (Alraies et al., 2024, Bulk RNA-seq, In-vitro BMDCs)"
+
 ###################################################################################
 ##### 2D plot: Top 200 LNP overlapped lists as reference!!!
 ###################################################################################
@@ -447,7 +461,7 @@ write.xlsx(Intersect_df_split_heatmap_excel, file = paste0("results/Upset_plots/
 Overlap_2D<-numeric()
 Common_score<-numeric()
 Gene_list_length<-numeric()
-de_gs_by_k_split_overlap_new<-de_gs_by_k_split_triwise[c(1:8,10,11,14:16,18:41)]
+de_gs_by_k_split_overlap_new<-de_gs_by_k_split_triwise[c(1:8,10,11,14:16,18:43)]
 for (k in 1:length(de_gs_by_k_split_overlap_new)){
   counter<-k
   Overlap_2D[counter]<-(length(intersect(de_gs_by_k_split_triwise[[12]],de_gs_by_k_split_overlap_new[[k]]))-length(intersect(de_gs_by_k_split_triwise[[13]],de_gs_by_k_split_overlap_new[[k]])))
@@ -482,6 +496,7 @@ Overlap_2D_df$delabel[Overlap_2D_df$diffexpressed != "NO"] <- Overlap_2D_df$List
 # cDC1s vs cDC2s
 Overlap_2D_df$CellType<- "cDC1s"
 Overlap_2D_df$CellType[grep("cDC2",rownames(Overlap_2D_df))]<-"cDC2s"
+Overlap_2D_df$CellType[grep("DCs",rownames(Overlap_2D_df))]<-"BMDCs"
 
 # Human vs Mouse
 Overlap_2D_df$Species <- "Mouse"
@@ -547,7 +562,7 @@ ggplot(data=Overlap_2D_df_without_human, aes(x=`Maturation Type`, y=log10(`Gene 
   geom_point() + 
   theme_minimal() +
   geom_text_repel(size = 3) +
-  scale_shape_manual(values=c(16, 17))+
+  scale_shape_manual(values=c(16,17,18))+
   scale_colour_manual(values = mycolors) +
   geom_vline(xintercept = 0) +
   xlim(-100, 100)
