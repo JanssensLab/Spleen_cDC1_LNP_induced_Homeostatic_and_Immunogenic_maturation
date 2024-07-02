@@ -497,6 +497,7 @@ Overlap_2D_df$delabel[Overlap_2D_df$diffexpressed != "NO"] <- Overlap_2D_df$List
 Overlap_2D_df$CellType<- "cDC1s"
 Overlap_2D_df$CellType[grep("cDC2",rownames(Overlap_2D_df))]<-"cDC2s"
 Overlap_2D_df$CellType[grep("DCs",rownames(Overlap_2D_df))]<-"BMDCs"
+Overlap_2D_df$CellType[grep("mreg",rownames(Overlap_2D_df))]<-"cDCs"
 
 # Human vs Mouse
 Overlap_2D_df$Species <- "Mouse"
@@ -559,10 +560,10 @@ colnames(Overlap_2D_df_without_human)[5]<-"Score significance"
 # Updated version 4 after feedback: Without species lists!!, color fixed based on score, label based on y-axis, bigger label, adapt limits x axis
 cairo_pdf(file=paste0("results/2D_plot/Test_plot_top200_v4_paper_",analysis,".pdf"), width=15, height = 10)
 ggplot(data=Overlap_2D_df_without_human, aes(x=`Maturation Type`, y=log10(`Gene list length`), col=`Score significance`, label=label_v2,shape=CellType)) + 
-  geom_point() + 
+  geom_point(size = 2.5) + 
   theme_minimal() +
   geom_text_repel(size = 3) +
-  scale_shape_manual(values=c(16,17,18))+
+  scale_shape_manual(values=c(15,16,17,18))+
   scale_colour_manual(values = mycolors) +
   geom_vline(xintercept = 0) +
   xlim(-100, 100)
