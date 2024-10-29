@@ -453,6 +453,79 @@ de_gs_by_k_split_triwise[[43]]<-LPS_WT_vs_NC_WT_results_genelist
 names(de_gs_by_k_split_triwise)[42]<-"Confinement-induced DC maturation (Alraies et al., 2024, Bulk RNA-seq, In-vitro BMDCs)"
 names(de_gs_by_k_split_triwise)[43]<-"LPS-induced DC maturation (Alraies et al., 2024, Bulk RNA-seq, In-vitro BMDCs)"
 
+## Also update the Zillionis genelists!!
+## Changed to DC3 vs DC1/DC2 comparison. Don't split up DC3s!
+Zillionis_scRNAseq_mouse_cDC1_maturation<-read.xlsx("results/Zillionis_Human_and_mouse_Lung_cancer/Maturation_markers_mouse_tumor_updated_DC3_Seurat_processed_from_raw_Zillionis_lung_cancer_Seurat.xlsx", sheet = "Mouse_tumor_DC3_vs_cDC1s")
+Zillionis_scRNAseq_mouse_cDC1_maturation_genelist<-Zillionis_scRNAseq_mouse_cDC1_maturation[which(Zillionis_scRNAseq_mouse_cDC1_maturation$p_val_adj<0.01 & Zillionis_scRNAseq_mouse_cDC1_maturation$avg_log2FC>0.25),"gene"]
+
+Zillionis_scRNAseq_mouse_cDC2_maturation<-read.xlsx("results/Zillionis_Human_and_mouse_Lung_cancer/Maturation_markers_mouse_tumor_updated_DC3_Seurat_processed_from_raw_Zillionis_lung_cancer_Seurat.xlsx", sheet = "Mouse_tumor_DC3_vs_cDC2s")
+Zillionis_scRNAseq_mouse_cDC2_maturation_genelist<-Zillionis_scRNAseq_mouse_cDC2_maturation[which(Zillionis_scRNAseq_mouse_cDC2_maturation$p_val_adj<0.01 & Zillionis_scRNAseq_mouse_cDC2_maturation$avg_log2FC>0.25),"gene"]
+
+de_gs_by_k_split_triwise[[38]]<-Zillionis_scRNAseq_mouse_cDC1_maturation_genelist
+de_gs_by_k_split_triwise[[39]]<-Zillionis_scRNAseq_mouse_cDC2_maturation_genelist
+
+## Add new nature comms paper Kim with LNP mRNA vaccine (03/10/24)
+DC_mig_LNP_vs_DC_cDC1_LNP_results<-read.xlsx("/home/clintdn/VIB/DATA/Sophie/Meta_analysis/Raw_data/Kim_et_al_2024/Maturation_markers_muscle_dataset_nature_comms_LNP_mRNA_vaccine.xlsx", sheet = "DC_mig_LNP_vs_DC_cDC1_LNP")
+DC_mig_LNP_vs_DC_cDC1_LNP_results_genelist<-DC_mig_LNP_vs_DC_cDC1_LNP_results[which(DC_mig_LNP_vs_DC_cDC1_LNP_results$p_val_adj<0.01 & DC_mig_LNP_vs_DC_cDC1_LNP_results$avg_log2FC>0.25),"gene"]
+DC_mig_LNPmRNA_vs_DC_cDC1_LNP_results<-read.xlsx("/home/clintdn/VIB/DATA/Sophie/Meta_analysis/Raw_data/Kim_et_al_2024/Maturation_markers_muscle_dataset_nature_comms_LNP_mRNA_vaccine.xlsx", sheet = "DC_mig_LNPmRNA_vs_DC_cDC1_LNP")
+DC_mig_LNPmRNA_vs_DC_cDC1_LNP_results_genelist<-DC_mig_LNPmRNA_vs_DC_cDC1_LNP_results[which(DC_mig_LNPmRNA_vs_DC_cDC1_LNP_results$p_val_adj<0.01 & DC_mig_LNPmRNA_vs_DC_cDC1_LNP_results$avg_log2FC>0.25),"gene"]
+DC_mig_LNP_vs_DC_cDC2_LNP_results<-read.xlsx("/home/clintdn/VIB/DATA/Sophie/Meta_analysis/Raw_data/Kim_et_al_2024/Maturation_markers_muscle_dataset_nature_comms_LNP_mRNA_vaccine.xlsx", sheet = "DC_mig_LNP_vs_DC_cDC2_LNP")
+DC_mig_LNP_vs_DC_cDC2_LNP_results_genelist<-DC_mig_LNP_vs_DC_cDC2_LNP_results[which(DC_mig_LNP_vs_DC_cDC2_LNP_results$p_val_adj<0.01 & DC_mig_LNP_vs_DC_cDC2_LNP_results$avg_log2FC>0.25),"gene"]
+DC_mig_LNPmRNA_vs_DC_cDC2_LNP_results<-read.xlsx("/home/clintdn/VIB/DATA/Sophie/Meta_analysis/Raw_data/Kim_et_al_2024/Maturation_markers_muscle_dataset_nature_comms_LNP_mRNA_vaccine.xlsx", sheet = "DC_mig_LNPmRNA_vs_DC_cDC2_LNP")
+DC_mig_LNPmRNA_vs_DC_cDC2_LNP_results_genelist<-DC_mig_LNPmRNA_vs_DC_cDC2_LNP_results[which(DC_mig_LNPmRNA_vs_DC_cDC2_LNP_results$p_val_adj<0.01 & DC_mig_LNPmRNA_vs_DC_cDC2_LNP_results$avg_log2FC>0.25),"gene"]
+
+de_gs_by_k_split_triwise[[44]]<-DC_mig_LNP_vs_DC_cDC1_LNP_results_genelist
+de_gs_by_k_split_triwise[[45]]<-DC_mig_LNPmRNA_vs_DC_cDC1_LNP_results_genelist
+de_gs_by_k_split_triwise[[46]]<-DC_mig_LNP_vs_DC_cDC2_LNP_results_genelist
+de_gs_by_k_split_triwise[[47]]<-DC_mig_LNPmRNA_vs_DC_cDC2_LNP_results_genelist
+
+names(de_gs_by_k_split_triwise)[44]<-"LNP-induced mDCs vs cDC1 (Kim et al., 2024, scRNA-seq, Muscle)"
+names(de_gs_by_k_split_triwise)[45]<-"mRNA_LNP-induced mDCs vs cDC1 (Kim et al., 2024, scRNA-seq, Muscle)"
+names(de_gs_by_k_split_triwise)[46]<-"LNP-induced mDCs vs cDC2 (Kim et al., 2024, scRNA-seq, Muscle)"
+names(de_gs_by_k_split_triwise)[47]<-"mRNA_LNP-induced mDCs vs cDC2 (Kim et al., 2024, scRNA-seq, Muscle)"
+
+## Add other in-house signatures
+de_gs_by_k_split_triwise[[48]]<-Victor_LNP_CITEseq_CpG_LNPs_mig_vs_SS_res_genelist
+de_gs_by_k_split_triwise[[49]]<-Victor_LNP_CITEseq_pIC_LNPs_mig_vs_SS_res_genelist
+de_gs_by_k_split_triwise[[50]]<-Victor_LNP_CITEseq_SS_mig_vs_res_genelist
+
+names(de_gs_by_k_split_triwise)[48]<-"CpG-LNP-induced cDC1 maturation 8h (Rennen et al., This study, CITE-seq, Spleen)"
+names(de_gs_by_k_split_triwise)[49]<-"pIC-LNP-induced cDC1 maturation 8h (Rennen et al., This study, CITE-seq, Spleen)"
+names(de_gs_by_k_split_triwise)[50]<-"Homeostatic cDC1 maturation (Rennen et al., This study, CITE-seq, Spleen)"
+
+## Also update the names to latest list of curated names
+New_genelist_names<-read.xlsx("Paper/Suppl_Table_Meta_analysis_genelists_Lennon_check_Victor_170924_updated.xlsx", sheet = 1)
+de_gs_by_k_split_triwise_updated<-de_gs_by_k_split_triwise
+for (name in 1:length(de_gs_by_k_split_triwise_updated)){
+  names(de_gs_by_k_split_triwise_updated)[1]
+  for (name2 in 1:nrow(New_genelist_names)){
+    if(New_genelist_names[name2,"Paper.annotation"] == names(de_gs_by_k_split_triwise_updated)[name]){
+      names(de_gs_by_k_split_triwise_updated)[name]<-New_genelist_names[name2,"Nieuwe.naam"]
+    }
+  }
+}
+
+## Update other names with time info
+names(de_gs_by_k_split_triwise_updated)[5]<-"pIC-induced cDC1 maturation 18h (Ardouin et al., 2016, Microarray, Spleen)"
+names(de_gs_by_k_split_triwise_updated)[6]<-"STAg-induced cDC1 maturation 18h (Ardouin et al., 2016, Microarray, Spleen)"
+names(de_gs_by_k_split_triwise_updated)[10]<-"eLNP-induced cDC1 maturation 8h (Rennen et al., This study, CITE-seq, Spleen)"  
+names(de_gs_by_k_split_triwise_updated)[11]<-"pIC-induced cDC1 maturation 8h (Rennen et al., This study, CITE-seq, Spleen)"
+names(de_gs_by_k_split_triwise_updated)[18]<-"Apoptotic cell-induced cDC1 signature (Cummings et al., 2016, Microarray, Small Intestine)"
+names(de_gs_by_k_split_triwise_updated)[31]<-"R848-actDC1 8h (Torow et al., 2023, scRNA-seq, SI PP)"
+names(de_gs_by_k_split_triwise_updated)[33]<-"R848-actDC2 8h (Torow et al., 2023, scRNA-seq, SI PP)"
+
+## Double check
+names(de_gs_by_k_split_triwise_updated)
+
+##Update
+de_gs_by_k_split_triwise<-de_gs_by_k_split_triwise_updated
+
+## Reorder based on name author
+de_gs_by_k_split_triwise_paper<-de_gs_by_k_split_triwise[c(42,43,1:6,7,8,14,16,18,44:47,21,24:33,37,38,39,10,11,48:50,9,12,13)]
+Final_full_names<-names(de_gs_by_k_split_triwise_paper)
+Final_abrev_names<-gsub(",.*,", ",", Final_full_names)
+
+
 ###################################################################################
 ##### 2D plot: Top 200 LNP overlapped lists as reference!!!
 ###################################################################################
@@ -461,11 +534,12 @@ names(de_gs_by_k_split_triwise)[43]<-"LPS-induced DC maturation (Alraies et al.,
 Overlap_2D<-numeric()
 Common_score<-numeric()
 Gene_list_length<-numeric()
-de_gs_by_k_split_overlap_new<-de_gs_by_k_split_triwise[c(1:8,10,11,14:16,18:43)]
+# de_gs_by_k_split_overlap_new<-de_gs_by_k_split_triwise[c(1:8,10,11,14:16,18:43)]
+de_gs_by_k_split_overlap_new<-de_gs_by_k_split_triwise_paper[c(1:33)]
 for (k in 1:length(de_gs_by_k_split_overlap_new)){
   counter<-k
-  Overlap_2D[counter]<-(length(intersect(de_gs_by_k_split_triwise[[12]],de_gs_by_k_split_overlap_new[[k]]))-length(intersect(de_gs_by_k_split_triwise[[13]],de_gs_by_k_split_overlap_new[[k]])))
-  Common_score[counter]<-length(intersect(de_gs_by_k_split_triwise[[9]],de_gs_by_k_split_overlap_new[[k]]))
+  Overlap_2D[counter]<-(length(intersect(de_gs_by_k_split_triwise_paper[[38]],de_gs_by_k_split_overlap_new[[k]]))-length(intersect(de_gs_by_k_split_triwise_paper[[39]],de_gs_by_k_split_overlap_new[[k]])))
+  Common_score[counter]<-length(intersect(de_gs_by_k_split_triwise_paper[[37]],de_gs_by_k_split_overlap_new[[k]]))
   Gene_list_length[counter]<-length(de_gs_by_k_split_overlap_new[[k]])
 }
 Overlap_2D
@@ -483,6 +557,8 @@ Overlap_2D_df<-as.data.frame(Overlap_2D_df)
 Overlap_2D_df$List_name<-rownames(Overlap_2D_df)
 
 ## Create plot
+library(ggplot2)
+library(ggrepel)
 p <- ggplot(data=Overlap_2D_df, aes(x=Overlap_2D, y=log10(Gene_list_length))) + geom_point() + theme_minimal()
 
 # add a column of NAs
@@ -494,10 +570,12 @@ Overlap_2D_df$delabel <- NA
 Overlap_2D_df$delabel[Overlap_2D_df$diffexpressed != "NO"] <- Overlap_2D_df$List_name[Overlap_2D_df$diffexpressed != "NO"]
 
 # cDC1s vs cDC2s
-Overlap_2D_df$CellType<- "cDC1s"
-Overlap_2D_df$CellType[grep("cDC2",rownames(Overlap_2D_df))]<-"cDC2s"
-Overlap_2D_df$CellType[grep("DCs",rownames(Overlap_2D_df))]<-"BMDCs"
-Overlap_2D_df$CellType[grep("mreg",rownames(Overlap_2D_df))]<-"cDCs"
+Overlap_2D_df$CellType<- "cDCs"
+Overlap_2D_df$CellType[grep("DC2",rownames(Overlap_2D_df))]<-"cDC2s"
+Overlap_2D_df$CellType[grep("BMDCs",rownames(Overlap_2D_df))]<-"BMDCs"
+Overlap_2D_df$CellType[grep("DC1",rownames(Overlap_2D_df))]<-"cDC1s"
+Overlap_2D_df$CellType[grep("CD11b",rownames(Overlap_2D_df))]<-"cDC2s"
+Overlap_2D_df$CellType[grep("CD103",rownames(Overlap_2D_df))]<-"cDC1s"
 
 # Human vs Mouse
 Overlap_2D_df$Species <- "Mouse"
@@ -510,9 +588,11 @@ Overlap_2D_df$Group<-paste0(Overlap_2D_df$Species,"_",Overlap_2D_df$CellType)
 mycolors <- c("forestgreen", "firebrick1", "gray50")
 names(mycolors) <- c("Homeo", "Immuno", "Undefined")
 
-# New label parameter based on y-axis -> change to al!!
+# New label parameter based on y-axis -> change to all!!
 Overlap_2D_df$label_v2<-NA
 Overlap_2D_df$label_v2[Overlap_2D_df$Gene_list_length >0] <- Overlap_2D_df$List_name[Overlap_2D_df$Gene_list_length > 0] #>100
+# Replace names with shorter version
+Overlap_2D_df$label_v2[Overlap_2D_df$Gene_list_length >0]<-Final_abrev_names[c(1:33)][Ordering1]
 
 # Create new version without human datasets
 Overlap_2D_df_without_human<-Overlap_2D_df[Overlap_2D_df$Species != "Human",]
@@ -520,49 +600,12 @@ colnames(Overlap_2D_df_without_human)[1]<-"Maturation Type"
 colnames(Overlap_2D_df_without_human)[3]<-"Gene list length"
 colnames(Overlap_2D_df_without_human)[5]<-"Score significance"
 
-# # Basic version: without species, color gradient type of maturation
-# cairo_pdf(file=paste0("results/Test_plot_top200_v1_",analysis,".pdf"), width=15, height = 12)
-# ggplot(data=Overlap_2D_df, aes(x=Overlap_2D, y=log10(Gene_list_length), col=Overlap_2D, label=delabel)) + 
-#   geom_point(aes(shape=CellType)) + 
-#   theme_minimal() +
-#   geom_text_repel(size = 2) +
-#   scale_shape_manual(values=c(16, 17))+
-#   scale_colour_gradient2(low = "red",
-#                          mid = "gray75",
-#                          high = "green",
-#                          midpoint = 0)
-# dev.off()
-# 
-# #Updated version 2: With species, color gradient type of maturation
-# cairo_pdf(file=paste0("results/Test_plot_top200_v2_",analysis,".pdf"), width=15, height = 12)
-# ggplot(data=Overlap_2D_df, aes(x=Overlap_2D, y=log10(Gene_list_length), col=Overlap_2D, label=delabel)) + 
-#   geom_point(aes(shape=Group)) + 
-#   theme_minimal() +
-#   geom_text_repel(size = 2) +
-#   scale_shape_manual(values=c(15, 16, 17, 18))+
-#   scale_colour_gradient2(low = "red",
-#                          mid = "gray75",
-#                          high = "green",
-#                          midpoint = 0)
-# dev.off()
-# 
-# #Updated version 3: With species, color fixed based on score (immuno vs homeo cutoff -5/5), alpha based on common score
-# cairo_pdf(file=paste0("results/Test_plot_top200_v3_",analysis,".pdf"), width=15, height = 12)
-# ggplot(data=Overlap_2D_df, aes(x=Overlap_2D, y=log10(Gene_list_length), col=diffexpressed, label=delabel, alpha=Common_score)) + 
-#   geom_point(aes(shape=Group)) + 
-#   theme_minimal() +
-#   geom_text_repel(size = 2) +
-#   scale_shape_manual(values=c(15, 16, 17, 18))+
-#   scale_alpha_continuous(range = c(0.3,1))+
-#   scale_colour_manual(values = mycolors)
-# dev.off()
-
 # Updated version 4 after feedback: Without species lists!!, color fixed based on score, label based on y-axis, bigger label, adapt limits x axis
-cairo_pdf(file=paste0("results/2D_plot/Test_plot_top200_v4_paper_",analysis,".pdf"), width=15, height = 10)
+cairo_pdf(file=paste0("results/2D_plot/Test_plot_top200_",analysis,"_1st_submission_v2.pdf"), width=15, height = 12)
 ggplot(data=Overlap_2D_df_without_human, aes(x=`Maturation Type`, y=log10(`Gene list length`), col=`Score significance`, label=label_v2,shape=CellType)) + 
   geom_point(size = 2.5) + 
   theme_minimal() +
-  geom_text_repel(size = 3) +
+  geom_text_repel(size = 5) + #4
   scale_shape_manual(values=c(15,16,17,18))+
   scale_colour_manual(values = mycolors) +
   geom_vline(xintercept = 0) +

@@ -2211,6 +2211,18 @@ pdf(file=paste0(output.dir,"Annotation/9_Paper_2024_annotated_UMAP_RNA_split_per
 DimPlot(seuratObj, reduction = "RNA_umap", label = F, split.by = "Condition", group.by = "Condition", ncol = 5, cols = brewer.pal(10, "Paired")[c(2:4,9:10,5:8)])
 dev.off()
 
+## Extra plot SS with annotation on RNA UMAP
+Idents(seuratObj)<-seuratObj$Condition
+seuratObj_SS<-subset(seuratObj, idents = "Steady state")
+
+pdf(file=paste0(output.dir,"Annotation/9_Paper_2024_annotated_RNA_UMAP_muscat_annotation_split_",experiment,".pdf"), width =40, height= 15)
+DimPlot(seuratObj, reduction = "RNA_umap", group.by = "annotated_clusters_Muscat_paper_2024", split.by = "Condition", ncol = 5)
+dev.off()
+
+pdf(file=paste0(output.dir,"Annotation/9_Paper_2024_annotated_RNA_UMAP_muscat_annotation_SS_",experiment,".pdf"), width =13, height= 12)
+DimPlot(seuratObj_SS, reduction = "RNA_umap", group.by = "annotated_clusters_Muscat_paper_2024")
+dev.off()
+
 ###############
 
 ### Find ADT markers for detailed annotated Harmony RNA clusters paper

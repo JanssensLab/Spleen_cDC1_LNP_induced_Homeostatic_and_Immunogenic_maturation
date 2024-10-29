@@ -78,6 +78,8 @@ cols_pIC_LNP_8h<-grep("VBO006",colnames(expression_8h))
 cols_CpG_LNP_8h<-grep("VBO007",colnames(expression_8h))
 cols_pIC_alone_8h<-grep("VBO008",colnames(expression_8h))
 
+cols_SS_8h<-grep("VBO004",colnames(expression_8h))
+
 cols_eLNP_2h<-grep("VBO009",colnames(expression_2h))
 cols_pIC_LNP_2h<-grep("VBO010",colnames(expression_2h))
 cols_CpG_LNP_2h<-grep("VBO011",colnames(expression_2h))
@@ -89,6 +91,8 @@ pIC_LNP_8h_mean<-apply(expression_8h[,cols_pIC_LNP_8h],1,mean)
 CpG_LNP_8h_mean<-apply(expression_8h[,cols_CpG_LNP_8h],1,mean)
 pIC_alone_8h_mean<-apply(expression_8h[,cols_pIC_alone_8h],1,mean)
 
+SS_8h_mean<-apply(expression_8h[,cols_SS_8h],1,mean)
+
 expTable_8h_mean_v2<-cbind(eLNP_8h_mean,pIC_LNP_8h_mean,CpG_LNP_8h_mean)
 colnames(expTable_8h_mean_v2)<-c('eLNP_8h','pIC_LNP_8h','CpG_LNP_8h')
 
@@ -97,6 +101,9 @@ colnames(expTable_8h_mean_v3)<-c('pIC_LNP_8h','CpG_LNP_8h','pIC_alone_8h')
 
 expTable_8h_mean_v4<-cbind(eLNP_8h_mean,pIC_LNP_8h_mean,pIC_alone_8h_mean)
 colnames(expTable_8h_mean_v4)<-c('eLNP_8h','pIC_LNP_8h','pIC_alone_8h')
+
+expTable_8h_mean_v5<-cbind(eLNP_8h_mean,pIC_LNP_8h_mean,SS_8h_mean)
+colnames(expTable_8h_mean_v5)<-c('eLNP_8h','pIC_LNP_8h','SS_8h')
 
 eLNP_2h_mean<-apply(expression_2h[,cols_eLNP_2h],1,mean)
 pIC_LNP_2h_mean<-apply(expression_2h[,cols_pIC_LNP_2h],1,mean)
@@ -119,11 +126,13 @@ write.xlsx(as.data.frame(expTable_2h_mean_v4), "VBO_LNP_merge/results/Triwise/Ex
 write.xlsx(as.data.frame(expTable_8h_mean_v2), "VBO_LNP_merge/results/Triwise/ExpTable_mean_8h_LM_v2.xlsx", row.names = T)
 write.xlsx(as.data.frame(expTable_8h_mean_v3), "VBO_LNP_merge/results/Triwise/ExpTable_mean_8h_LM_v3.xlsx", row.names = T)
 write.xlsx(as.data.frame(expTable_8h_mean_v4), "VBO_LNP_merge/results/Triwise/ExpTable_mean_8h_LM_v4.xlsx", row.names = T)
+write.xlsx(as.data.frame(expTable_8h_mean_v5), "VBO_LNP_merge/results/Triwise/ExpTable_mean_8h_LM_v5.xlsx", row.names = T)
 
 ######## CREATE BARYCOORDINATES
 barycoords_8h_v2 <- transformBarycentric(expTable_8h_mean_v2)
 barycoords_8h_v3 <- transformBarycentric(expTable_8h_mean_v3)
 barycoords_8h_v4 <- transformBarycentric(expTable_8h_mean_v4)
+barycoords_8h_v5 <- transformBarycentric(expTable_8h_mean_v5)
 
 barycoords_2h_v2 <- transformBarycentric(expTable_2h_mean_v2)
 barycoords_2h_v3 <- transformBarycentric(expTable_2h_mean_v3)
@@ -146,6 +155,9 @@ CpG_LNP_8h_vs_pIC_LNP_8h<-readRDS("VBO_LNP_merge/results/Robjects/tbl_fil_muscat
 CpG_LNP_8h_vs_pIC_alone_8h<-readRDS("VBO_LNP_merge/results/Robjects/tbl_fil_muscat_DESeq2_new_CpG_LNPs_8h-pIC_8h_VBO_4-12_clint.rds")
 pIC_alone_8h_vs_pIC_LNP_8h<-readRDS("VBO_LNP_merge/results/Robjects/tbl_fil_muscat_DESeq2_new_pIC_8h-pIC_LNPs_8h_VBO_4-12_clint.rds")
 
+eLNP_8h_vs_SS_8h<-readRDS("VBO_LNP_merge/results/Robjects/tbl_fil_muscat_DESeq2_new_eLNPs_8h-WT_VBO_4-12_clint.rds")
+pIC_LNP_8h_vs_SS_8h<-readRDS("VBO_LNP_merge/results/Robjects/tbl_fil_muscat_DESeq2_new_pIC_LNPs_8h-WT_VBO_4-12_clint.rds")
+
 Gdiffexp_CpG_LNP_8h_vs_eLNP_8h <- c(CpG_LNP_8h_vs_eLNP_8h$`Late mature cDC1s`$gene)
 Gdiffexp_eLNP_8h_vs_pIC_LNP_8h <- c(eLNP_8h_vs_pIC_LNP_8h$`Late mature cDC1s`$gene)
 
@@ -153,6 +165,9 @@ Gdiffexp_CpG_LNP_8h_vs_pIC_LNP_8h <- c(CpG_LNP_8h_vs_pIC_LNP_8h$`Late mature cDC
 
 Gdiffexp_CpG_LNP_8h_vs_pIC_alone_8h <- c(CpG_LNP_8h_vs_pIC_alone_8h$`Late mature cDC1s`$gene)
 Gdiffexp_pIC_alone_8h_vs_pIC_LNP_8h <- c(pIC_alone_8h_vs_pIC_LNP_8h$`Late mature cDC1s`$gene)
+
+Gdiffexp_eLNP_8h_vs_SS_8h <- c(eLNP_8h_vs_SS_8h$`Late mature cDC1s`$gene)
+Gdiffexp_pIC_LNP_8h_vs_SS_8h <- c(pIC_LNP_8h_vs_SS_8h$`Late mature cDC1s`$gene)
 
 ## Update February 2024!! Switch to stricter list (clint suffix: p_adj.glb < 0.01, abs(logFC) > 1, baseMean > 50)!!!!!!!
 CpG_LNP_2h_vs_eLNP_2h<-readRDS("VBO_LNP_merge/results/Robjects/tbl_fil_muscat_DESeq2_new_CpG_LNPs_2h-eLNPs_2h_VBO_4-12_clint.rds")
@@ -301,6 +316,10 @@ print(p6)
 fileName<-paste0(getwd(),"/VBO_LNP_merge/results/Triwise/interactivePlot_v3_Late_mature_cDC1s_pIC_alone_8h_vs_pIC_LNP_8h_paper_2024.html")
 saveWidget(p6,file=fileName) ##needs full path!
 
+p7<-interactiveDotplot(expTable_8h_mean_v5, Gdiffexp=Gdiffexp_eLNP_8h_vs_SS_8h, Goi= genelist, plotLocalEnrichment=FALSE, rmax=5)
+print(p7)
+fileName<-paste0(getwd(),"/VBO_LNP_merge/results/Triwise/interactivePlot_v5_Late_mature_cDC1s_eLNP_8h_vs_SS_8h_paper_2024.html")
+saveWidget(p7,file=fileName) ##needs full path!
 
 ## 2h
 p1_2h<-interactiveDotplot(expTable_2h_mean_v2, Gdiffexp=Gdiffexp_CpG_LNP_2h_vs_eLNP_2h, Goi= genelist, plotLocalEnrichment=FALSE, rmax=5)
@@ -402,6 +421,9 @@ length(allDEgenes_8h_v3)
 allDEgenes_8h_v4<-unique(c(Gdiffexp_eLNP_8h_vs_pIC_alone_8h,Gdiffexp_pIC_alone_8h_vs_pIC_LNP_8h,Gdiffexp_eLNP_8h_vs_pIC_LNP_8h))
 length(allDEgenes_8h_v4)
 
+allDEgenes_8h_v5<-unique(c(Gdiffexp_eLNP_8h_vs_pIC_LNP_8h,Gdiffexp_eLNP_8h_vs_SS_8h,Gdiffexp_pIC_LNP_8h_vs_SS_8h))
+length(allDEgenes_8h_v5)
+
 
 allDEgenes_2h_v2<-unique(c(Gdiffexp_CpG_LNP_2h_vs_eLNP_2h,Gdiffexp_eLNP_2h_vs_pIC_LNP_2h,Gdiffexp_CpG_LNP_2h_vs_pIC_LNP_2h))
 length(allDEgenes_2h_v2)
@@ -489,6 +511,11 @@ p_v2_8h<-interactiveDotplot(expTable_8h_mean_v2, Gdiffexp=allDEgenes_8h_v2, plot
 fileName<-paste0(getwd(),"/VBO_LNP_merge/results/Triwise/interactivePlot_v2_8h_Late_mature_cDC1s_all_DEGs_paper_2024.html")
 saveWidget(p_v2_8h,file=fileName) ##needs full path!
 
+# Higher rmax for online tool
+p_v2_8h<-interactiveDotplot(expTable_8h_mean_v2, Gdiffexp=allDEgenes_8h_v2, plotLocalEnrichment=FALSE, rmax=8)
+fileName<-paste0(getwd(),"/VBO_LNP_merge/results/Triwise/interactivePlot_v2_8h_Late_mature_cDC1s_all_DEGs_paper_2024_higher_rmax.html")
+saveWidget(p_v2_8h,file=fileName) ##needs full path!
+
 p_v3_8h<-interactiveDotplot(expTable_8h_mean_v3, Gdiffexp=allDEgenes_8h_v3, plotLocalEnrichment=FALSE, rmax=5)
 fileName<-paste0(getwd(),"/VBO_LNP_merge/results/Triwise/interactivePlot_v3_8h_Late_mature_cDC1s_all_DEGs_paper_2024.html")
 saveWidget(p_v3_8h,file=fileName) ##needs full path!
@@ -496,6 +523,11 @@ saveWidget(p_v3_8h,file=fileName) ##needs full path!
 p_v4_8h<-interactiveDotplot(expTable_8h_mean_v4, Gdiffexp=allDEgenes_8h_v4, plotLocalEnrichment=FALSE, rmax=5)
 fileName<-paste0(getwd(),"/VBO_LNP_merge/results/Triwise/interactivePlot_v4_8h_Late_mature_cDC1s_all_DEGs_paper_2024.html")
 saveWidget(p_v4_8h,file=fileName) ##needs full path!
+
+p_v5_8h<-interactiveDotplot(expTable_8h_mean_v5, Gdiffexp=allDEgenes_8h_v5, plotLocalEnrichment=FALSE, rmax=5)
+print(p_v5_8h)
+fileName<-paste0(getwd(),"/VBO_LNP_merge/results/Triwise/interactivePlot_v5_Late_mature_cDC1s_all_DEGs_paper_2024.html")
+saveWidget(p_v5_8h,file=fileName) ##needs full path!
 
 
 p_v2_2h<-interactiveDotplot(expTable_2h_mean_v2, Gdiffexp=allDEgenes_2h_v2, plotLocalEnrichment=FALSE, rmax=5)
@@ -555,6 +587,89 @@ names(geneset_list)<-c("red","green","blue", "purple","orange","turquoise","brow
 ### Write results
 write.xlsx(geneset_list, "VBO_LNP_merge/results/Triwise/triwisePlot_withColors_8h_v2_paper_2024.xlsx")
 
+###############
+
+## Extra August 2024: new type of table for paper! Also include coordinates.
+DEG_matrix<-barycoords_8h_v2[allDEgenes_8h_v2,]
+DEG_matrix$gene<-rownames(DEG_matrix)
+DEG_matrix<-DEG_matrix[,c(5,1:4)]
+Non_DEG_matrix<-barycoords_8h_v2[!c(rownames(barycoords_8h_v2)) %in% allDEgenes_8h_v2,]
+Non_DEG_matrix$gene<-rownames(Non_DEG_matrix)
+Non_DEG_matrix<-Non_DEG_matrix[,c(5,1:4)]
+# geneset_list2<-tibble::lst(DEG_matrix,Non_DEG_matrix,
+#                            genesSet1matrix,genesSet2matrix,genesSet3matrix,genesSet4matrix,
+#                            genesSet5matrix,genesSet6matrix,genesSet7matrix)
+# names(geneset_list2)<-c("DEG","non-DEG","DEG_set1","DEGset2","DEG_set3", "DEG_set4","DEG_set5","DEG_set6","DEG_set7")
+geneset_list2<-tibble::lst(DEG_matrix,Non_DEG_matrix)
+names(geneset_list2)<-c("DEG","non-DEG")
+write.xlsx(geneset_list2, "VBO_LNP_merge/results/Triwise/RNA_original_Paper_2024/Late_mature_cDC1s/V2_eLNP_pICLNP_CpGLNP/triwisePlot_8h_v2_paper_new_2024.xlsx")
+
+
+###########
+
+## Also make table for new eLNP vs SS triwise (October 2024)
+
+###Seperate the DE genes of the different comparisons
+#set1 = DE genes only present in pIC_LNP_8h_vs_SS_8h
+#set2 = DE genes only present in eLNP_8h_vs_pIC_LNP_8h
+#set3 = DE genes only present in eLNP_8h_vs_SS_8h
+#set4 = DE genes present in all 3 comparisons
+#set5 = DE genes present in pIC_LNP_8h_vs_SS_8h and eLNP_8h_vs_pIC_LNP_8h
+#set6 = DE genes present in eLNP_8h_vs_pIC_LNP_8h and eLNP_8h_vs_SS_8h
+#set7 = DE genes present in pIC_LNP_8h_vs_SS_8h and eLNP_8h_vs_SS_8h
+
+DEgenesGroup1 <- pIC_LNP_8h_vs_SS_8h$`Late mature cDC1s`
+rownames(DEgenesGroup1) <- DEgenesGroup1$gene
+DEgenesGroup2 <- eLNP_8h_vs_pIC_LNP_8h$`Late mature cDC1s`
+rownames(DEgenesGroup2) <- DEgenesGroup2$gene
+DEgenesGroup3 <- eLNP_8h_vs_SS_8h$`Late mature cDC1s`
+rownames(DEgenesGroup3) <- DEgenesGroup3$gene
+
+genesSet5tmp<-intersect(rownames(DEgenesGroup1),rownames(DEgenesGroup2))
+genesSet6tmp<-intersect(rownames(DEgenesGroup2),rownames(DEgenesGroup3))
+genesSet7tmp<-intersect(rownames(DEgenesGroup1),rownames(DEgenesGroup3))
+genesSet4<-intersect(genesSet5tmp, rownames(DEgenesGroup3))
+genesSet5<-setdiff(genesSet5tmp,genesSet4)
+genesSet6<-setdiff(genesSet6tmp,genesSet4)
+genesSet7<-setdiff(genesSet7tmp,genesSet4)
+genesSet1<-setdiff(rownames(DEgenesGroup1),unique(c(rownames(DEgenesGroup2),rownames(DEgenesGroup3))))
+genesSet2<-setdiff(rownames(DEgenesGroup2),unique(c(rownames(DEgenesGroup1),rownames(DEgenesGroup3))))
+genesSet3<-setdiff(rownames(DEgenesGroup3),unique(c(rownames(DEgenesGroup1),rownames(DEgenesGroup2))))
+
+# 8 changed to 9: p adj loc -> p adj glb!!
+genesSet1matrix<-DEgenesGroup1[genesSet1,c(1,3,4,9)]
+genesSet2matrix<-DEgenesGroup2[genesSet2,c(1,3,4,9)]
+genesSet3matrix<-DEgenesGroup3[genesSet3,c(1,3,4,9)]
+genesSet4matrix<-cbind(DEgenesGroup1[genesSet4,c(1,3,4,9)],DEgenesGroup2[genesSet4,c(1,3,4,9)],DEgenesGroup3[genesSet4,c(1,3,4,9)])
+genesSet5matrix<-cbind(DEgenesGroup1[genesSet5,c(1,3,4,9)],DEgenesGroup2[genesSet5,c(1,3,4,9)])
+genesSet6matrix<-cbind(DEgenesGroup2[genesSet6,c(1,3,4,9)],DEgenesGroup3[genesSet6,c(1,3,4,9)])
+genesSet7matrix<-cbind(DEgenesGroup1[genesSet7,c(1,3,4,9)],DEgenesGroup3[genesSet7,c(1,3,4,9)]) 
+
+geneset_list<-tibble::lst(genesSet1matrix,genesSet2matrix,genesSet3matrix,genesSet4matrix,
+                          genesSet5matrix,genesSet6matrix,genesSet7matrix)
+names(geneset_list)<-c("DEG_set1","DEG_set2","DEG_set3", "DEG_set4","DEG_set5","DEG_set6","DEG_set7")
+
+### Write results
+library('openxlsx')
+write.xlsx(geneset_list, "VBO_LNP_merge/results/Triwise/triwisePlot_withColors_8h_v5_paper_2024.xlsx")
+
+## Extra August 2024: new type of table for paper! Also include coordinates.
+DEG_matrix<-barycoords_8h_v5[allDEgenes_8h_v5,]
+DEG_matrix$gene<-rownames(DEG_matrix)
+DEG_matrix<-DEG_matrix[,c(5,1:4)]
+Non_DEG_matrix<-barycoords_8h_v5[!c(rownames(barycoords_8h_v5)) %in% allDEgenes_8h_v5,]
+Non_DEG_matrix$gene<-rownames(Non_DEG_matrix)
+Non_DEG_matrix<-Non_DEG_matrix[,c(5,1:4)]
+# geneset_list2<-tibble::lst(DEG_matrix,Non_DEG_matrix,
+#                            genesSet1matrix,genesSet2matrix,genesSet3matrix,genesSet4matrix,
+#                            genesSet5matrix,genesSet6matrix,genesSet7matrix)
+# names(geneset_list2)<-c("DEG","non-DEG","DEG_set1","DEGset2","DEG_set3", "DEG_set4","DEG_set5","DEG_set6","DEG_set7")
+geneset_list2<-tibble::lst(DEG_matrix,Non_DEG_matrix)
+names(geneset_list2)<-c("DEG","non-DEG")
+write.xlsx(geneset_list2, "VBO_LNP_merge/results/Triwise/RNA_original_Paper_2024/Late_mature_cDC1s/V5_eLNP_pICLNP_SS/triwisePlot_8h_v5_paper_new_2024.xlsx")
+
+#####
+
 p_v2_8h<-plotDotplot(barycoords_8h_v2, Gdiffexp=allDEgenes_8h_v2, showlabels = F, rmax = 8, Goi=list(Set1=genesSet1,Set2=genesSet2,Set3=genesSet3,Set4=genesSet4,
                                                                                                      Set5=genesSet5,Set6=genesSet6,Set7=genesSet7), colorvalues=wantedColors7) +
   theme(legend.position = "none")
@@ -589,6 +704,105 @@ p_v2_8h <- p_v2_8h +
                   box.padding =0.25)
 
 p_v2_8h
+
+## New genelist from paper August 2024!!
+genelist<-c("Card19", "Ifnl3", "Ifnl2", "Pcp4", "Rbms2","Sema4f","Il12a", "Ccl3", "Tnip3",
+            "Btla", "Cd274", "Ido1")
+
+p_v2_8h <- plotDotplot(barycoords_8h_v2, Gdiffexp = allDEgenes_8h_v2, Goi= genelist, rmax = 8, showlabels = F) 
+
+p_v2_8h <- p_v2_8h + scale_y_continuous(expand = expansion(mult = 0.2)) + scale_x_continuous(expand = expansion(mult = 0.2))   #change scaling
+
+#MARK GENES ON PLOT
+
+# FROM FIND MAKERS
+NegXBarycoords <- subset(barycoords_8h_v2[intersect(unlist(genelist),allDEgenes_8h_v2),],barycoords_8h_v2[intersect(unlist(genelist),allDEgenes_8h_v2),1]<0)
+PosXBarycoords <- subset(barycoords_8h_v2[intersect(unlist(genelist),allDEgenes_8h_v2),],barycoords_8h_v2[intersect(unlist(genelist),allDEgenes_8h_v2),1]>0)
+
+p_v2_8h <- p_v2_8h + #size increased to 6 april/2024
+  geom_text_repel(NegXBarycoords[],
+                  mapping=aes(label=rownames(NegXBarycoords), x=NegXBarycoords[,1], y=NegXBarycoords[,2]),
+                  force = 1, size=6, segment.alpha=0.5, segment.colour = '#999999',
+                  nudge_x = (0-NegXBarycoords[,1]-7),
+                  box.padding =0.25) +
+  geom_text_repel(PosXBarycoords[,],
+                  mapping=aes(label=rownames(PosXBarycoords), x=PosXBarycoords[,1], y=PosXBarycoords[,2]),
+                  force = 1, size=6, segment.alpha=0.5, segment.colour = '#999999',
+                  nudge_x = (0-PosXBarycoords[,1]+7),
+                  box.padding =0.25)
+
+print(p_v2_8h)
+
+pdf("VBO_LNP_merge/results/Triwise/RNA_original_Paper_2024/Late_mature_cDC1s/V2_eLNP_pICLNP_CpGLNP/Plot_v2_8h_strict_genes_labeled_text_Fig2b.pdf", width = 15, height = 15) #Different strict list used!!!!
+print(p_v2_8h)
+dev.off()
+
+## Raster image (Sep 2024)
+library(ggrastr)
+
+pdf("VBO_LNP_merge/results/Triwise/RNA_original_Paper_2024/Late_mature_cDC1s/V2_eLNP_pICLNP_CpGLNP/Plot_v2_8h_rasterized_strict_genes_labeled_text_Fig2b.pdf", width = 15, height = 15) #Different strict list used!!!!
+rasterize(p_v2_8h, layers='Point', dpi=300)
+dev.off()
+
+##########################
+
+## New genelist eLNP vs SS LM for paper October 2024!!
+genelist<-c("Mx2","Oasl2","Oas1a","Ifit1","Ifit2","Ifit3","Irf7","Ly6a","Ccl5","Cxcl9",
+            "Stat4","Eif2ak2","Alox5ap","Itgb2","Naaa","Plbd1","Rab7b","Wdfy4","Ppt2",
+            "H2-DMb1","Ciita","H2-M2","Gngt2","Cotl1","Crip1","Flna","St6galnac6","Fabp5",
+            "Gpr183","Ifi209","Serpina3g")
+
+p_v5_8h <- plotDotplot(barycoords_8h_v5, Gdiffexp = Gdiffexp_eLNP_8h_vs_SS_8h, Goi= genelist, rmax = 8, showlabels = F) 
+
+p_v5_8h <- p_v5_8h + scale_y_continuous(expand = expansion(mult = 0.2)) + scale_x_continuous(expand = expansion(mult = 0.2))   #change scaling
+
+#MARK GENES ON PLOT
+
+# FROM FIND MAKERS
+NegYBarycoords <- subset(barycoords_8h_v5[intersect(unlist(genelist),Gdiffexp_eLNP_8h_vs_SS_8h),],barycoords_8h_v5[intersect(unlist(genelist),Gdiffexp_eLNP_8h_vs_SS_8h),2]<0)
+PosYBarycoords <- subset(barycoords_8h_v5[intersect(unlist(genelist),Gdiffexp_eLNP_8h_vs_SS_8h),],barycoords_8h_v5[intersect(unlist(genelist),Gdiffexp_eLNP_8h_vs_SS_8h),2]>0)
+
+NegYNegXBarycoords <- NegYBarycoords[which(NegYBarycoords$x<1),]
+NegYPosXBarycoords <- NegYBarycoords[which(NegYBarycoords$x>1),]
+
+PosYNegXBarycoords <- PosYBarycoords[which(PosYBarycoords$x<(-2)),]
+PosYPosXBarycoords <- PosYBarycoords[which(PosYBarycoords$x>(-2)),]
+
+p_v5_8h <- p_v5_8h + #size increased to 6 april/2024
+  geom_text_repel(NegYNegXBarycoords[],
+                  mapping=aes(label=rownames(NegYNegXBarycoords), x=NegYNegXBarycoords[,1], y=NegYNegXBarycoords[,2]),
+                  force = 1, size=6, segment.alpha=0.5, segment.colour = '#999999',
+                  nudge_x = (0-NegYNegXBarycoords[,1]-7),
+                  box.padding =0.25) +
+  geom_text_repel(NegYPosXBarycoords[,],
+                  mapping=aes(label=rownames(NegYPosXBarycoords), x=NegYPosXBarycoords[,1], y=NegYPosXBarycoords[,2]),
+                  force = 1, size=6, segment.alpha=0.5, segment.colour = '#999999',
+                  nudge_x = (0-NegYPosXBarycoords[,1]+7),
+                  box.padding =0.25) +
+  geom_text_repel(PosYNegXBarycoords[],
+                  mapping=aes(label=rownames(PosYNegXBarycoords), x=PosYNegXBarycoords[,1], y=PosYNegXBarycoords[,2]),
+                  force = 1, size=6, segment.alpha=0.5, segment.colour = '#999999',
+                  nudge_x = (0-PosYNegXBarycoords[,1]-7),
+                  box.padding =0.25) +
+  geom_text_repel(PosYPosXBarycoords[,],
+                  mapping=aes(label=rownames(PosYPosXBarycoords), x=PosYPosXBarycoords[,1], y=PosYPosXBarycoords[,2]),
+                  force = 1, size=6, segment.alpha=0.5, segment.colour = '#999999',
+                  nudge_x = (0-PosYPosXBarycoords[,1]+7),
+                  box.padding =0.25)
+
+print(p_v5_8h)
+
+pdf("VBO_LNP_merge/results/Triwise/RNA_original_Paper_2024/Late_mature_cDC1s/V5_eLNP_pICLNP_SS/Plot_v5_8h_strict_genes_labeled_text_FigS2.pdf", width = 15, height = 15) #Different strict list used!!!!
+print(p_v5_8h)
+dev.off()
+
+## Raster image (Sep 2024)
+library(ggrastr)
+
+pdf("VBO_LNP_merge/results/Triwise/RNA_original_Paper_2024/Late_mature_cDC1s/V5_eLNP_pICLNP_SS/Plot_v5_8h_rasterized_strict_genes_labeled_text_FigS2.pdf", width = 15, height = 15) #Different strict list used!!!!
+rasterize(p_v5_8h, layers='Point', dpi=300)
+dev.off()
+
 
 ######
 
