@@ -209,6 +209,10 @@ C61_list<-read.xlsx("/home/clintdn/VIB/DATA/Sophie/RNA-seq_Victor/2020_analysis/
                     sheet = "C61")
 genelist<-firstup(C61_list$Gene.Symbol)
 
+#Extra May 2025 rebuttal: cytokine activity GO term
+CytokineGO<-read.xlsx("/home/clintdn/VIB/DATA/Sophie/scRNA-seq_Victor/LNP_CITEseq_experiment/Documentation/Cytokine_activity_GO_0005125_Mus_musculus.xlsx", colNames = F)
+CytokineGO_genes<-unique(CytokineGO$X2)
+
 ##########################
 ### GENES TO MARK ON PLOT
 ##########################
@@ -804,7 +808,43 @@ rasterize(p_v5_8h, layers='Point', dpi=300)
 dev.off()
 
 
-######
+#####
+
+## New genelist from cytokine rebuttal May 2025!!
+genelist<-CytokineGO_genes
+
+p_v2_8h <- plotDotplot(barycoords_8h_v2, Gdiffexp = allDEgenes_8h_v2, Goi= genelist, rmax = 8, showlabels = F) 
+
+p_v2_8h <- p_v2_8h + scale_y_continuous(expand = expansion(mult = 0.2)) + scale_x_continuous(expand = expansion(mult = 0.2))   #change scaling
+
+#MARK GENES ON PLOT
+
+# FROM FIND MAKERS
+NegXBarycoords <- subset(barycoords_8h_v2[intersect(unlist(genelist),allDEgenes_8h_v2),],barycoords_8h_v2[intersect(unlist(genelist),allDEgenes_8h_v2),1]<0)
+PosXBarycoords <- subset(barycoords_8h_v2[intersect(unlist(genelist),allDEgenes_8h_v2),],barycoords_8h_v2[intersect(unlist(genelist),allDEgenes_8h_v2),1]>0)
+
+p_v2_8h <- p_v2_8h + #size increased to 6 april/2024
+  geom_text_repel(NegXBarycoords[],
+                  mapping=aes(label=rownames(NegXBarycoords), x=NegXBarycoords[,1], y=NegXBarycoords[,2]),
+                  force = 1, size=6, segment.alpha=0.5, segment.colour = '#999999',
+                  nudge_x = (0-NegXBarycoords[,1]-7),
+                  box.padding =0.25) +
+  geom_text_repel(PosXBarycoords[,],
+                  mapping=aes(label=rownames(PosXBarycoords), x=PosXBarycoords[,1], y=PosXBarycoords[,2]),
+                  force = 1, size=6, segment.alpha=0.5, segment.colour = '#999999',
+                  nudge_x = (0-PosXBarycoords[,1]+7),
+                  box.padding =0.25)
+
+print(p_v2_8h)
+
+## Raster image
+library(ggrastr)
+
+pdf("VBO_LNP_merge/results/Triwise/RNA_original_Paper_2024/Late_mature_cDC1s/V2_eLNP_pICLNP_CpGLNP/Plot_v2_8h_rasterized_cytokine_genes_labeled_text.pdf", width = 15, height = 15) 
+rasterize(p_v2_8h, layers='Point', dpi=300)
+dev.off()
+
+##########################
 
 ###Extra: create colored plots with gene lists! (only eBayes)
 ###Seperate the DE genes of the different comparisons

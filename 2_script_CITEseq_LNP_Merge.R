@@ -2512,6 +2512,250 @@ pdf(file = paste0(output.dir,"Feature_plots/Paper_2024/Feature_plot_markers_pape
 F2
 dev.off()
 
+###############################################
+
+## Rebuttal Cell reports (13/05/2025)
+dir.create("results/Rebuttal_Cell_reports/")
+DimPlot(seuratObj, reduction = "RNA_harmony_umap", label = T, pt.size = 1.5, group.by = "annotated_clusters_Muscat_v2_paper_2024") + NoLegend()
+
+## Subset to only keep pops to compare
+Idents(seuratObj)<-seuratObj$annotated_clusters_Muscat_v2_paper_2024
+seuratObj_subset<-subset(seuratObj, idents = levels(Idents(seuratObj))[c(1,4,5,9,15,19,26,29,35,39,46)]) #Also included 1 (Imm SS)
+
+pdf(file=paste0(output.dir,"Rebuttal_Cell_reports/Dimplot_subset_split_RNA_harmony_UMAP_",samplename,"_pdf"), height = 25, width = 30)
+DimPlot(seuratObj_subset, reduction = "RNA_harmony_umap", pt.size = 1.5,
+        group.by = "annotated_clusters_Muscat_v2_paper_2024", split.by = "Condition", ncol = 3,
+        cols = c("cadetblue1",brewer.pal(10, "Paired")[1:4],brewer.pal(10, "Paired")[9:10],brewer.pal(10, "Paired")[5:8]))
+dev.off()
+
+## Update muscat annotation
+seuratObj_subset$annotated_clusters_Muscat_paper_2024 <-factor(as.character(seuratObj_subset$annotated_clusters_Muscat_paper_2024),
+                                                               levels = c("Immature cDC1s", "Early mature cDC1s", "Late mature cDC1s")) #Adapted for Imm
+levels(seuratObj_subset$annotated_clusters_Muscat_paper_2024)<-c("Immature","Early_mature","Late_mature")
+
+## Try new sample_ID
+seuratObj_subset$sample_ID<-paste0(as.character(seuratObj_subset$MULTI_ID),"_",as.character(seuratObj_subset$Condition_v2),
+                                   "_",as.character(seuratObj_subset$annotated_clusters_Muscat_paper_2024))
+seuratObj_subset$sample_ID<-factor(seuratObj_subset$sample_ID, #Added Imm replicates
+                                   levels = c("Hashtag1_Steady_state_Immature","Hashtag2_Steady_state_Immature","Hashtag3_Steady_state_Immature","Hashtag4_Steady_state_Immature",
+                                              "Hashtag1_Steady_state_Early_mature","Hashtag2_Steady_state_Early_mature","Hashtag3_Steady_state_Early_mature","Hashtag4_Steady_state_Early_mature",
+                                              "Hashtag1_Steady_state_Late_mature","Hashtag2_Steady_state_Late_mature","Hashtag3_Steady_state_Late_mature","Hashtag4_Steady_state_Late_mature",
+                                              "Hashtag1_eLNPs_2h_Early_mature","Hashtag2_eLNPs_2h_Early_mature","Hashtag3_eLNPs_2h_Early_mature","Hashtag4_eLNPs_2h_Early_mature",       
+                                              "Hashtag1_eLNPs_8h_Late_mature","Hashtag2_eLNPs_8h_Late_mature","Hashtag3_eLNPs_8h_Late_mature","Hashtag4_eLNPs_8h_Late_mature",
+                                              "Hashtag1_pIC_alone_2h_Early_mature","Hashtag2_pIC_alone_2h_Early_mature","Hashtag3_pIC_alone_2h_Early_mature","Hashtag4_pIC_alone_2h_Early_mature",
+                                              "Hashtag1_pIC_alone_8h_Late_mature","Hashtag2_pIC_alone_8h_Late_mature","Hashtag3_pIC_alone_8h_Late_mature","Hashtag4_pIC_alone_8h_Late_mature",
+                                              "Hashtag1_pIC_LNPs_2h_Early_mature","Hashtag2_pIC_LNPs_2h_Early_mature","Hashtag3_pIC_LNPs_2h_Early_mature","Hashtag4_pIC_LNPs_2h_Early_mature",
+                                              "Hashtag1_pIC_LNPs_8h_Late_mature","Hashtag2_pIC_LNPs_8h_Late_mature","Hashtag3_pIC_LNPs_8h_Late_mature","Hashtag4_pIC_LNPs_8h_Late_mature",
+                                              "Hashtag1_CpG_LNPs_2h_Early_mature","Hashtag2_CpG_LNPs_2h_Early_mature","Hashtag3_CpG_LNPs_2h_Early_mature","Hashtag4_CpG_LNPs_2h_Early_mature",
+                                              "Hashtag1_CpG_LNPs_8h_Late_mature","Hashtag2_CpG_LNPs_8h_Late_mature","Hashtag3_CpG_LNPs_8h_Late_mature"))
+levels(seuratObj_subset$sample_ID)
+seuratObj_subset$sample_ID[is.na(seuratObj_subset$sample_ID)]
+
+## Look at average expression per sample
+Idents(seuratObj_subset)<-seuratObj_subset$sample_ID
+seuratObj_subset_average <- AverageExpression(seuratObj_subset, return.seurat = T)
+
+## Prep plot
+Groups<-c(rep("SS_Imm",4),rep("SS_EM",4),rep("SS_LM",4),
+          rep("eLNPs_2h_EM",4),rep("eLNPs_8h_LM",4),
+          rep("pIC_2h_EM",4),rep("pIC_8h_LM",4),
+          rep("pIC_LNPs_2h_EM",4),rep("pIC_LNPs_8h_LM",4),
+          rep("CpG_LNPs_2h_EM",4),rep("CpG_LNPs_8h_LM",3))
+Groups_v2<-seq(1:43)
+
+## Add new metadata
+seuratObj_subset_average$sample_ID<-seuratObj_subset_average@active.ident
+seuratObj_subset_average$Groups<-seuratObj_subset_average$sample_ID
+levels(seuratObj_subset_average$Groups)<-Groups
+seuratObj_subset_average$sample_ID_v2<-seuratObj_subset_average$sample_ID
+levels(seuratObj_subset_average$sample_ID_v2)<-c("SS_Imm","SS_Imm","SS_Imm","SS_Imm","SS_EM",
+                                                 "SS_EM", "SS_EM", "SS_EM", "SS_LM", "SS_LM",
+                                                 "SS_LM", "SS_LM", "eLNPs_2h_EM","eLNPs_2h_EM","eLNPs_2h_EM",
+                                                 "eLNPs_2h_EM","eLNPs_8h_LM","eLNPs_8h_LM","eLNPs_8h_LM","eLNPs_8h_LM",   
+                                                 "pIC_2h_EM","pIC_2h_EM","pIC_2h_EM","pIC_2h_EM","pIC_8h_LM",
+                                                 "pIC_8h_LM","pIC_8h_LM","pIC_8h_LM","pIC_LNPs_2h_EM","pIC_LNPs_2h_EM",
+                                                 "pIC_LNPs_2h_EM", "pIC_LNPs_2h_EM", "pIC_LNPs_8h_LM", "pIC_LNPs_8h_LM", "pIC_LNPs_8h_LM",
+                                                 "pIC_LNPs_8h_LM", "CpG_LNPs_2h_EM", "CpG_LNPs_2h_EM","CpG_LNPs_2h_EM", "CpG_LNPs_2h_EM",
+                                                 "CpG_LNPs_8h_LM", "CpG_LNPs_8h_LM", "CpG_LNPs_8h_LM")
+seuratObj_subset_average@active.ident<-seuratObj_subset_average$sample_ID_v2
+
+## Load in genelists??
+# tbl_fil_clint_relaxed_v2<- readRDS(file="SAM_merge/results_merge_non_harmony/Robjects/tbl_fil_muscat_DESeq2_relaxed_v2_DKO-WT_SAM_merge_clint.rds")
+Victor_LNP_CITEseq_SS_mig_vs_res_EM<-read.xlsx("results/Muscat_Immature_cross_condition/tbl_full_muscat_DESeq2_new_Steady_state_Early_mature_cDC1s-Steady_state_Immature_cDC1s_VBO_4-12.xlsx")
+Victor_LNP_CITEseq_SS_mig_vs_res_EM_genelist<-Victor_LNP_CITEseq_SS_mig_vs_res_EM[which(Victor_LNP_CITEseq_SS_mig_vs_res_EM$p_adj.glb<0.01 & Victor_LNP_CITEseq_SS_mig_vs_res_EM$logFC > 1 & Victor_LNP_CITEseq_SS_mig_vs_res_EM$baseMean > 50),"gene"]
+
+Victor_LNP_CITEseq_eLNPs_mig_vs_SS_res_EM<-read.xlsx("results/Muscat_Immature_cross_condition/tbl_full_muscat_DESeq2_new_eLNPs_2h_Early_mature_cDC1s-Steady_state_Immature_cDC1s_VBO_4-12.xlsx")
+Victor_LNP_CITEseq_eLNPs_mig_vs_SS_res_EM_genelist<-Victor_LNP_CITEseq_eLNPs_mig_vs_SS_res_EM[which(Victor_LNP_CITEseq_eLNPs_mig_vs_SS_res_EM$p_adj.glb<0.01 & Victor_LNP_CITEseq_eLNPs_mig_vs_SS_res_EM$logFC > 1 & Victor_LNP_CITEseq_eLNPs_mig_vs_SS_res_EM$baseMean > 50),"gene"]
+
+Victor_LNP_CITEseq_pIC_LNPs_mig_vs_SS_res_EM<-read.xlsx("results/Muscat_Immature_cross_condition/tbl_full_muscat_DESeq2_new_pIC_LNPs_2h_Early_mature_cDC1s-Steady_state_Immature_cDC1s_VBO_4-12.xlsx")
+Victor_LNP_CITEseq_pIC_LNPs_mig_vs_SS_res_EM_genelist<-Victor_LNP_CITEseq_pIC_LNPs_mig_vs_SS_res_EM[which(Victor_LNP_CITEseq_pIC_LNPs_mig_vs_SS_res_EM$p_adj.glb<0.01 & Victor_LNP_CITEseq_pIC_LNPs_mig_vs_SS_res_EM$logFC > 1 & Victor_LNP_CITEseq_pIC_LNPs_mig_vs_SS_res_EM$baseMean > 50),"gene"]
+
+Victor_LNP_CITEseq_CpG_LNPs_mig_vs_SS_res_EM<-read.xlsx("results/Muscat_Immature_cross_condition/tbl_full_muscat_DESeq2_new_CpG_LNPs_2h_Early_mature_cDC1s-Steady_state_Immature_cDC1s_VBO_4-12.xlsx")
+Victor_LNP_CITEseq_CpG_LNPs_mig_vs_SS_res_EM_genelist<-Victor_LNP_CITEseq_CpG_LNPs_mig_vs_SS_res_EM[which(Victor_LNP_CITEseq_CpG_LNPs_mig_vs_SS_res_EM$p_adj.glb<0.01 & Victor_LNP_CITEseq_CpG_LNPs_mig_vs_SS_res_EM$logFC > 1 & Victor_LNP_CITEseq_CpG_LNPs_mig_vs_SS_res_EM$baseMean > 50),"gene"]
+
+Victor_LNP_CITEseq_pIC_alone_mig_vs_SS_res_EM<-read.xlsx("results/Muscat_Immature_cross_condition/tbl_full_muscat_DESeq2_new_pIC_alone_2h_Early_mature_cDC1s-Steady_state_Immature_cDC1s_VBO_4-12.xlsx")
+Victor_LNP_CITEseq_pIC_alone_mig_vs_SS_res_EM_genelist<-Victor_LNP_CITEseq_pIC_alone_mig_vs_SS_res_EM[which(Victor_LNP_CITEseq_pIC_alone_mig_vs_SS_res_EM$p_adj.glb<0.01 & Victor_LNP_CITEseq_pIC_alone_mig_vs_SS_res_EM$logFC > 1 & Victor_LNP_CITEseq_pIC_alone_mig_vs_SS_res_EM$baseMean > 50),"gene"]
+
+Victor_LNP_CITEseq_SS_mig_vs_res<-read.xlsx("results/Muscat_Immature_cross_condition/tbl_full_muscat_DESeq2_new_Steady_state_Late_mature_cDC1s-Steady_state_Immature_cDC1s_VBO_4-12.xlsx")
+Victor_LNP_CITEseq_SS_mig_vs_res_genelist<-Victor_LNP_CITEseq_SS_mig_vs_res[which(Victor_LNP_CITEseq_SS_mig_vs_res$p_adj.glb<0.01 & Victor_LNP_CITEseq_SS_mig_vs_res$logFC > 1 & Victor_LNP_CITEseq_SS_mig_vs_res$baseMean > 50),"gene"]
+
+Victor_LNP_CITEseq_eLNPs_mig_vs_SS_res<-read.xlsx("results/Muscat_Immature_cross_condition/tbl_full_muscat_DESeq2_new_eLNPs_8h_Late_mature_cDC1s-Steady_state_Immature_cDC1s_VBO_4-12.xlsx")
+Victor_LNP_CITEseq_eLNPs_mig_vs_SS_res_genelist<-Victor_LNP_CITEseq_eLNPs_mig_vs_SS_res[which(Victor_LNP_CITEseq_eLNPs_mig_vs_SS_res$p_adj.glb<0.01 & Victor_LNP_CITEseq_eLNPs_mig_vs_SS_res$logFC > 1 & Victor_LNP_CITEseq_eLNPs_mig_vs_SS_res$baseMean > 50),"gene"]
+
+Victor_LNP_CITEseq_pIC_LNPs_mig_vs_SS_res<-read.xlsx("results/Muscat_Immature_cross_condition/tbl_full_muscat_DESeq2_new_pIC_LNPs_8h_Late_mature_cDC1s-Steady_state_Immature_cDC1s_VBO_4-12.xlsx")
+Victor_LNP_CITEseq_pIC_LNPs_mig_vs_SS_res_genelist<-Victor_LNP_CITEseq_pIC_LNPs_mig_vs_SS_res[which(Victor_LNP_CITEseq_pIC_LNPs_mig_vs_SS_res$p_adj.glb<0.01 & Victor_LNP_CITEseq_pIC_LNPs_mig_vs_SS_res$logFC > 1 & Victor_LNP_CITEseq_pIC_LNPs_mig_vs_SS_res$baseMean > 50),"gene"]
+
+Victor_LNP_CITEseq_CpG_LNPs_mig_vs_SS_res<-read.xlsx("results/Muscat_Immature_cross_condition/tbl_full_muscat_DESeq2_new_CpG_LNPs_8h_Late_mature_cDC1s-Steady_state_Immature_cDC1s_VBO_4-12.xlsx")
+Victor_LNP_CITEseq_CpG_LNPs_mig_vs_SS_res_genelist<-Victor_LNP_CITEseq_CpG_LNPs_mig_vs_SS_res[which(Victor_LNP_CITEseq_CpG_LNPs_mig_vs_SS_res$p_adj.glb<0.01 & Victor_LNP_CITEseq_CpG_LNPs_mig_vs_SS_res$logFC > 1 & Victor_LNP_CITEseq_CpG_LNPs_mig_vs_SS_res$baseMean > 50),"gene"]
+
+Victor_LNP_CITEseq_pIC_alone_mig_vs_SS_res<-read.xlsx("results/Muscat_Immature_cross_condition/tbl_full_muscat_DESeq2_new_pIC_alone_8h_Late_mature_cDC1s-Steady_state_Immature_cDC1s_VBO_4-12.xlsx")
+Victor_LNP_CITEseq_pIC_alone_mig_vs_SS_res_genelist<-Victor_LNP_CITEseq_pIC_alone_mig_vs_SS_res[which(Victor_LNP_CITEseq_pIC_alone_mig_vs_SS_res$p_adj.glb<0.01 & Victor_LNP_CITEseq_pIC_alone_mig_vs_SS_res$logFC > 1 & Victor_LNP_CITEseq_pIC_alone_mig_vs_SS_res$baseMean > 50),"gene"]
+
+## Combine immuno lists for now
+Victor_LNP_CITEseq_CpG_and_pIC_LNPs_mig_vs_SS_res_genelist<-unique(c(Victor_LNP_CITEseq_pIC_LNPs_mig_vs_SS_res_genelist,Victor_LNP_CITEseq_CpG_LNPs_mig_vs_SS_res_genelist)) #Take combination of all genes instead of intersect 1800 -> 2500!!
+Victor_LNP_CITEseq_CpG_and_pIC_LNPs_mig_vs_SS_res_EM_genelist<-unique(c(Victor_LNP_CITEseq_pIC_LNPs_mig_vs_SS_res_EM_genelist,Victor_LNP_CITEseq_CpG_LNPs_mig_vs_SS_res_EM_genelist)) #Take combination of all genes instead of intersect 1800 -> 2500!!
+
+# Overlap with SS list
+Victor_LNP_CITEseq_homeo<-setdiff(Victor_LNP_CITEseq_SS_mig_vs_res_genelist,Victor_LNP_CITEseq_CpG_and_pIC_LNPs_mig_vs_SS_res_genelist) #Only in SS
+Victor_LNP_CITEseq_common<-intersect(Victor_LNP_CITEseq_SS_mig_vs_res_genelist,Victor_LNP_CITEseq_CpG_and_pIC_LNPs_mig_vs_SS_res_genelist) #Common between SS and CpG/pIC
+Victor_LNP_CITEseq_immuno<-setdiff(Victor_LNP_CITEseq_CpG_and_pIC_LNPs_mig_vs_SS_res_genelist,Victor_LNP_CITEseq_SS_mig_vs_res_genelist) #Only in CpG/pIC
+
+Victor_LNP_CITEseq_homeo_EM<-setdiff(Victor_LNP_CITEseq_SS_mig_vs_res_EM_genelist,Victor_LNP_CITEseq_CpG_and_pIC_LNPs_mig_vs_SS_res_EM_genelist) #Only in SS
+Victor_LNP_CITEseq_common_EM<-intersect(Victor_LNP_CITEseq_SS_mig_vs_res_EM_genelist,Victor_LNP_CITEseq_CpG_and_pIC_LNPs_mig_vs_SS_res_EM_genelist) #Common between SS and CpG/pIC
+Victor_LNP_CITEseq_immuno_EM<-setdiff(Victor_LNP_CITEseq_CpG_and_pIC_LNPs_mig_vs_SS_res_EM_genelist,Victor_LNP_CITEseq_SS_mig_vs_res_EM_genelist) #Only in CpG/pIC
+
+## pIC alone
+
+
+Test_genelist<-c("Xcr1","Egr1","Egr2","Egr3","Nr4a1","Nr4a2","Nr4a3",
+                 "Tnf","Cxcl9","Cxcl10","Cd40","Ccr7","Fscn1","Cd80","Cd63")
+Genelist<-c(head(Victor_LNP_CITEseq_SS_mig_vs_res_genelist,25),
+            head(Victor_LNP_CITEseq_eLNPs_mig_vs_SS_res_genelist,25),
+            head(Victor_LNP_CITEseq_pIC_alone_mig_vs_SS_res_genelist,25),
+            head(Victor_LNP_CITEseq_pIC_LNPs_mig_vs_SS_res_genelist,25),
+            head(Victor_LNP_CITEseq_CpG_LNPs_mig_vs_SS_res_genelist,25))
+Genelist_EM<-c(head(Victor_LNP_CITEseq_SS_mig_vs_res_EM_genelist,25),
+               head(Victor_LNP_CITEseq_eLNPs_mig_vs_SS_res_EM_genelist,25),
+               head(Victor_LNP_CITEseq_pIC_alone_mig_vs_SS_res_EM_genelist,25),
+               head(Victor_LNP_CITEseq_pIC_LNPs_mig_vs_SS_res_EM_genelist,25),
+               head(Victor_LNP_CITEseq_CpG_LNPs_mig_vs_SS_res_EM_genelist,25))
+Triwise_genelist<-c("Tmem176a","Tmem176b","Apol7c","Tm4sf5","Zmynd15","Sema6d",
+                    "Atxn1","Eno3","H2-M2","Slco5a1","Cyp51","Fabp5", #eLNP8h
+                    "Itgb8","Pcp4","Ifnl2","Ccl5","Plagl1",#picLNP8
+                    "Il27","Anxa1","Ido1","Socs3","Plekhs1","Ccl3","Tnip3",#CpGLNP8h
+                    "Nupr1","Ifi205","Il2ra","Il1rn","Il12rb2","Hamp","Cxcl11","Axl","Ifit1",#Shared immuno
+                    "Ehf","Nr4a1","Apol10b","Glipr1","Sqle","Abcg3","Ms4a1","Ttc39a",
+                    "Spib","Icosl","Clec2i","Ccnd3","Cd63","Sh2b3","Polr2g","Pcp4",#pIC alone
+                    "Il7r","Cxcr4","Il12b","Kctd12","Scd1","Scin","Ikzf4","Oasl2","Ifi27l2a","Spib", #interesting extra,
+                    "Ckb","Alox5ap","Ppt1","Naaa","Slamf8","Plbd1","Rab7b","Wdfy4","H2-DMb1","Ciita","Fyb","Gngt2") ##SS
+Triwise_genelist_EM<-c("Scd1","Lad1","Tfeb","Lpar6","Rrad","Spic","Herpud1","Cbfa2t3","Zfp36l1",#eLNP
+                       "M1ap","Ifna2","Ifnl3","Ifnb1","Sass6","Ifit3b","Tnfsf15",#pICLNP
+                       "Isg15","Il27","Ccl4","Il2ra","Il6","Itpkc","Ccl3",#Shared
+                       "Tnf","Socs3","Il12a","Tnip3","Mefv","Il1b",#CpG
+                       "Naaa","Wfdc17","Ms4a6b","Fos","Gm8221","Apol10b","Ms4a4c","Apol7c",#pIC alone
+                       "Jaml","Egr1","Tlr3","Xcr1","Irf8","Ly6a")
+Consensus_genelist<-c("Xcr1","Egr1","Egr2","Egr3","Nr4a1","Nr4a2","Lpar6",
+                      "Mefv","Il1b","Naaa","Fos","Tlr3","Irf8",
+                      "Herpud1","Cbfa2t3","Zfp36l1","Glipr1","Abcg3",
+                      "Ms4a1","Ttc39a","Ckb","Alox5ap","Ppt1","Naaa","Slamf8",
+                      "Plbd1","Rab7b","Wdfy4","H2-DMb1","Ciita","Fyb",#Imm
+                      "Cxcr4","Il12b","Kctd12",
+                      "Ccr7","Fscn1","Cd63","Lad1","Tfeb","Rrad","Spic",
+                      "Gm8221","Apol10b","Apol7c","Tmem176a","Tmem176b","Apol7c",
+                      "Tm4sf5","Zmynd15","Sema6d",
+                      "Atxn1","Eno3","H2-M2","Slco5a1","Cyp51","Fabp5",
+                      "Ehf","Sqle",#Homeo
+                      "Spib","Icosl","Clec2i","Ccnd3","Sh2b3","Polr2g","Pcp4",
+                      "Il7r",#pIC alone
+                      "M1ap","Ifna2","Ifnl3","Ifnb1","Sass6","Ifit3b","Tnfsf15",
+                      "Isg15","Il27","Ccl4","Il2ra","Il6","Itpkc","Ccl3",
+                      "Tnf","Socs3","Il12a","Tnip3",
+                      "Ms4a4c","Ly6a","Ifnl2","Ccl5","Plagl1",#picLNP8
+                      "Il27","Anxa1","Ido1","Socs3","Plekhs1","Ccl3","Tnip3",#CpGLNP8h
+                      "Nupr1","Ifi205","Il2ra","Il1rn","Il12rb2","Hamp","Axl","Ifit1",
+                      "Ikzf4","Oasl2","Ifi27l2a","Cd40","Cd80","Cxcl9","Cxcl10","Cxcl11"#Immuno
+)
+Extra_genelist<-c("Sell","Cd8a","Manf","Pdia6","Hspa5","Creld2","Hspa5",
+                  "Ccl4","Cadm1","Nfkbia")
+
+firstup <- function(x) {
+  substr(x, 1, 1) <- toupper(substr(x, 1, 1))
+  x
+}
+
+Rebuttal_genelist<-firstup(c("pdia6","creld2","xcr1","egr3","nr4a2","apol7c","ccr7","fscn1","cd63",
+                             "tmem176b","slco5a1","sqle","icosl","axl","Ifi27l2a","ido1","ifna2",
+                             "Il12a","il12b","ccl4","ccl5","isg15","ifi205","cd40",
+                             "cd80","cxcl9","cxcl10"))
+## Create heatmaps
+library("RColorBrewer")
+gg_color_hue <- function(n) {
+  hues = seq(15, 375, length = n + 1)
+  hcl(h = hues, l = 65, c = 100)[1:n]
+}
+Colset<-c("cadetblue1",brewer.pal(10, "Paired")[1:4],brewer.pal(10, "Paired")[9:10],brewer.pal(10, "Paired")[5:8])
+
+
+## Heatmap 
+H1 <- DoHeatmap(seuratObj_subset_average, assay = "RNA", #cells = levels(Idents(seuratObj_average))[c(1:6)],
+                features = Rebuttal_genelist, #head(tbl_fil_clint_relaxed_v2[[i]][["gene"]],50), 
+                size = 3,draw.lines = FALSE, group.colors = Colset,disp.min = -2.5, disp.max = 2.5) + 
+  # scale_color_manual(values = Colset_EM) +
+  scale_fill_gradient2( low = rev(c('#d1e5f0','#67a9cf','#2166ac')),
+                        mid = "white", high = rev(c('#b2182b','#ef8a62','#fddbc7')),
+                        midpoint = 0, guide = "colourbar", aesthetics = "fill")
+
+pdf(file=paste0(output.dir,"Rebuttal_Cell_reports/Average_expression_heatmap_rebuttal_paper_Sophie_genelist_",samplename,".pdf"), width = 15, height = 10)
+print(H1)
+dev.off()
+
+## Dotplot
+seuratObj_subset$sample_ID_v2<-seuratObj_subset$sample_ID
+levels(seuratObj_subset$sample_ID_v2)<-c("SS_Imm","SS_Imm","SS_Imm","SS_Imm","SS_EM",
+                                         "SS_EM", "SS_EM", "SS_EM", "SS_LM", "SS_LM",
+                                         "SS_LM", "SS_LM", "eLNPs_2h_EM","eLNPs_2h_EM","eLNPs_2h_EM",
+                                         "eLNPs_2h_EM","eLNPs_8h_LM","eLNPs_8h_LM","eLNPs_8h_LM","eLNPs_8h_LM",   
+                                         "pIC_2h_EM","pIC_2h_EM","pIC_2h_EM","pIC_2h_EM","pIC_8h_LM",
+                                         "pIC_8h_LM","pIC_8h_LM","pIC_8h_LM","pIC_LNPs_2h_EM","pIC_LNPs_2h_EM",
+                                         "pIC_LNPs_2h_EM", "pIC_LNPs_2h_EM", "pIC_LNPs_8h_LM", "pIC_LNPs_8h_LM", "pIC_LNPs_8h_LM",
+                                         "pIC_LNPs_8h_LM", "CpG_LNPs_2h_EM", "CpG_LNPs_2h_EM","CpG_LNPs_2h_EM", "CpG_LNPs_2h_EM",
+                                         "CpG_LNPs_8h_LM", "CpG_LNPs_8h_LM", "CpG_LNPs_8h_LM")
+Colors_dotplot<-c("#071AE5","#F50635") #030720
+Idents(seuratObj_subset)<-seuratObj_subset$sample_ID_v2
+
+pdf(file=paste0(output.dir,"Rebuttal_Cell_reports/Dot_plot_rebuttal_Consensus_genelist_",samplename,".pdf"), height = 25, width = 8)
+D1<-DotPlot(seuratObj_subset, features = rev(unique(Consensus_genelist)), cols = Colors_dotplot) + coord_flip() + theme(axis.text.x = element_text(angle=70, hjust = 1))
+print(D1)
+dev.off()
+
+# Featureplot Il1b rebuttal! Split 9 conditons!
+features<-c("Il1b") 
+
+pdf(file=paste0(output.dir,"Feature_plots/Paper_2024/Feature_plot_markers_rebuttal_2025_split_RNA_harmony_UMAP_",samplename,"_blue_grey.pdf"), height = 4, width = 40)
+for (feature in features) {
+  F1<-FeaturePlot(object = seuratObj, features =feature, cols = c("grey", "blue"), 
+                  reduction = "RNA_harmony_umap", min.cutoff = 'q2', max.cutoff = 'q98', pt.size = 1.5, order=T,
+                  split.by = "Condition", raster = T) & theme(legend.position = "right") #+ #wnn.umap
+  # scale_color_viridis(option = "C")
+  print(F1)
+}
+dev.off()
+
+# Extra question Sophie Featureplot Il1b caspase/apoptosis pathway (15/05/25)
+features<-c("Il1b", "Casp1", "Pycard","Nlrp3") 
+Colors_dotplot<-c("#071AE5","#F50635") #030720
+
+pdf(file=paste0(output.dir,"Feature_plots/Feature_plot_markers_caspase_pathway_2025_split_RNA_harmony_UMAP_",samplename,"_blue_grey.pdf"), height = 4, width = 40)
+D1<-DotPlot(seuratObj, features = rev(features), group.by = "annotated_clusters_Muscat_v2_paper_2024", cols = Colors_dotplot) + coord_flip() + theme(axis.text.x = element_text(angle=70, hjust = 1))
+print(D1)
+for (feature in features) {
+  F1<-FeaturePlot(object = seuratObj, features =feature, cols = c("grey", "blue"), 
+                  reduction = "RNA_harmony_umap", min.cutoff = 'q2', max.cutoff = 'q98', pt.size = 1.5, order=T,
+                  split.by = "Condition", raster = T) & theme(legend.position = "right") #+ #wnn.umap
+  # scale_color_viridis(option = "C")
+  print(F1)
+}
+dev.off()
 
 #############################
 
